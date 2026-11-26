@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>Zurück zum Butler</title>
+<style>
+  :root { --bg:#f6f7f9; --fg:#1d2330; --muted:#5b6476; --btn:#2a7ae2; --card:#fff; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#14171d; --fg:#e8ebf1; --muted:#9aa3b5; --btn:#4b90ec; --card:#1d222b; } }
+  body { margin:0; font:17px/1.5 system-ui, -apple-system, sans-serif; background:var(--bg); color:var(--fg);
+         display:flex; min-height:100vh; align-items:center; justify-content:center; padding:16px; box-sizing:border-box; }
+  .card { background:var(--card); border-radius:16px; padding:28px 24px; max-width:420px; width:100%; text-align:center;
+          box-shadow:0 2px 12px rgba(0,0,0,.08); }
+  h1 { font-size:22px; margin:0 0 8px; }
+  p { color:var(--muted); margin:8px 0 20px; }
+  a.btn { display:block; background:var(--btn); color:#fff; text-decoration:none; padding:14px; border-radius:12px; font-weight:600; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1 id="t">Fast geschafft …</h1>
+  <p id="m">Telegram öffnet sich gleich. Falls nicht, tipp auf den Button.</p>
+  <a class="btn" id="b" href="https://t.me/Butler_Beni_bot">Zurück zum Butler</a>
+</div>
+<script>
+  // Nur Weiterleitung: liest ?code= bzw. ?error= aus der Adresse und übergibt es an den Telegram-Bot. Nichts wird gespeichert.
+  var q = new URLSearchParams(location.search);
+  var code = q.get("code") || "";
+  var start = "bankfehler";
+  if (!q.get("error") && /^[A-Za-z0-9-]{8,59}$/.test(code)) {
+    start = "bank_" + code;
+  } else {
+    document.getElementById("t").textContent = "Das hat nicht geklappt";
+    document.getElementById("m").textContent = "Die Bank hat die Freigabe nicht bestätigt. Tipp auf den Button und starte im Bot nochmal mit /bank.";
+  }
+  var web = "https://t.me/Butler_Beni_bot?start=" + encodeURIComponent(start);
+  document.getElementById("b").href = web;
+  history.replaceState(null, "", location.pathname);  // Code aus der Adresszeile/Verlauf entfernen
+  location.href = "tg://resolve?domain=Butler_Beni_bot&start=" + encodeURIComponent(start);
+  setTimeout(function () { location.href = web; }, 1500);
+</script>
+</body>
+</html>
